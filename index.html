@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="nl">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="AR business cards"/>
+    <script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.1.5/dist/mindar-image.prod.js"></script>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.1.5/dist/mindar-image-aframe.prod.js"></script>
+
+    <script type="application/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            const openWebsite = (event) => {
+                window.open('https://www.jidoka.be/nl/', '_blank');
+            }
+            const openLinkedIn = (event) => {
+                window.open('https://www.linkedin.com/in/koenvaes/', '_blank');
+            }
+            const frontCardEntity = document.querySelector('#front-entity');
+            const frontButtonLinkedIn = document.querySelector('#button-linkedin');
+
+            const backCardEntity = document.querySelector('#back-entity');
+            const backButtonWebsite = document.querySelector('#button-website');
+
+
+            frontCardEntity.addEventListener("targetFound", event => {
+                console.log("frontCardEntity found");
+                frontButtonLinkedIn && frontButtonLinkedIn.addEventListener("click", openLinkedIn);
+            });
+
+            frontCardEntity.addEventListener("targetLost", event => {
+                console.log("frontCardEntity lost");
+                frontButtonLinkedIn && frontButtonLinkedIn.removeEventListener("click", openLinkedIn);
+            });
+
+            backCardEntity.addEventListener("targetFound", event => {
+                console.log("backCardEntity found");
+                backButtonWebsite && backButtonWebsite.addEventListener("click", openWebsite);
+            });
+
+            backCardEntity.addEventListener("targetLost", event => {
+                console.log("backCardEntity lost");
+                backButtonWebsite && backButtonWebsite.removeEventListener("click", openWebsite);
+            });
+
+            screen.orientation.addEventListener('change', event => {
+                // reload page, because tracking needs to be reinitialised, or it won't work
+                window.location.reload();
+            })
+
+        });
+    </script>
+    <style>
+        #scanning-overlay.hidden {
+            display: none;
+        }
+
+        .scanner-card {
+            display: block;
+            margin: auto;
+            width: 75%;
+        }
+
+        .flex-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+<div id="scanning-overlay" class="hidden">
+    <div class="mindar-ui-overlay mindar-ui-scanning">
+        <div class="scanning">
+            <div class="inner flex-center">
+                <img class="scanner-card" src="./assets/images/card-front.png" alt="business card">
+                <div class="scanline"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<a-scene
+        mindar-image="uiScanning: #scanning-overlay; imageTargetSrc: ./assets/targets/both-targets.mind; filterMinCF: 0.0001; filterBeta: 0.005; warmupTolerance: 2; missTolerance: 10;"
+        vr-mode-ui="enabled: false"
+        color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights"
+        arjs="sourceWidth:1920; sourceHeight:1080; displayWidth: 1920; displayHeight: 1080;"
+        device-orientation-permission-ui="enabled: false">
+
+    <a-assets>
+        <img id="img-card-front" src="./assets/images/card-front.png"/>
+        <img id="img-card-back" src="./assets/images/card-back.png"/>
+        <img id="img-profile" src="./assets/images/profile.png"/>
+        <img id="texture-marble" src="./assets/images/marble-texture.png"/>
+        <a-asset-item id="model-logo" src="./assets/models/logo.gltf"></a-asset-item>
+        <a-asset-item id="model-beer" src="./assets/models/beer.gltf"></a-asset-item>
+    </a-assets>
+
+    <a-camera position="0 0 0" look-controls="enabled: false"
+              cursor="fuse: false; rayOrigin: mouse;" raycaster="far: ${customFields.libVersion}; objects: .clickable"
+    ></a-camera>
+
+    <!-- Default lighting -->
+    <a-entity light="type: ambient; color: #BBB"></a-entity>
+    <a-entity light="type: directional; color: #FFF; intensity: 0.6" position="-0.5 1 1"></a-entity>
+
+    <!-- targetIndex: 0 = back of card -->
+    <a-entity mindar-image-target="targetIndex: 0"
+              id="back-entity">
+        <!--        <a-plane src="#img-card-back" position="0 0 0" height="0.628" width="1" rotation="0 0 0">-->
+        <!--        </a-plane>-->
+
+        <a-gltf-model src="#model-logo" rotation="90 0 0" position="0 0.60 0" scale="0.005 0.005 0.005"
+                      animation="property: rotation; to: 90 360 0; dur: 3000; easing: linear; loop: true;"></a-gltf-model>
+
+        <!-- TODO: improve button design -->
+        <a-plane id="button-website"
+                 class="clickable"
+                 color="red"
+                 opacity="0.5"
+                 position="0 -0.70 0"
+                 height="0.628"
+                 width="1"
+                 rotation="0 0 0">
+            <a-text color="white" align="center" baseline="center" width="1.9" position="0 0 0.015"
+                    value="Open Website"></a-text>
+        </a-plane>
+    </a-entity>
+
+    <!-- targetIndex: 1 = front of card -->
+    <a-entity mindar-image-target="targetIndex: 1"
+              id="front-entity">
+
+        <!-- Replicate card digitally to match lighting of scene -->
+        <a-plane src="#img-card-front" position="0 0 0.0025" height="0.628" width="1" rotation="0 0 0">
+        </a-plane>
+
+        <!-- Profile image and name -->
+        <a-entity position="0 0.15 0"
+                  animation="property: position; from: 0 0.15 0; to: 0.70 0.15 0; dur: 1000; delay: 3000; loop: false">
+            <a-plane src="#img-profile" position="0 0 0" height="0.3" width="0.3" rotation="0 0 0"
+                     material="transparent:true">
+            </a-plane>
+            <a-text value="Koen" position="0.175 0.075 0" width="3"></a-text>
+            <a-text value="Vaes" position="0.175 -0.05 0" width="3"></a-text>
+        </a-entity>
+
+        <!-- Clickable button with texture -->
+        <a-box color="#4DA7D1" depth="0.03" position="0 -0.175 -0.03" height="0.25" width="0.60"
+               animation="property: position; from: 0 -0.175 -0.03; to: 0.875 -0.175 -0.03; dur: 1000; delay: 4000; loop: false"
+               id="button-linkedin"
+               class="clickable"
+               src="#texture-marble">
+            <a-text color="white" align="center" baseline="center" width="1.9" position="0 0 0.015"
+                    value="Open LinkedIn"></a-text>
+        </a-box>
+
+        <a-video src="./assets/rick-roll.mp4"
+                 position="0 0 0" height="0.628" width="1" scale="1 1 1"
+                 animation="property: position; from: 0 0 0; to: 0 -0.70 0; dur: 1000; delay: 5000; loop: false">
+        </a-video>
+
+        <!-- Hobbies: role playing & brewing -->
+        <a-entity position="0 0 0"
+                  visible="false"
+                  animation="property: visible; from: false; to: true; dur: 1000; delay: 5500; loop: false">
+            <a-gltf-model src="#model-beer" rotation="0 0 0" position="0.725 -0.70 0.1" scale="0.08 0.08 0.08"
+                          animation="property: rotation; to: 0 360 0; dur: 5000; easing: linear; loop: true;"></a-gltf-model>
+            <a-icosahedron color="hotpink" radius="0.145" position="1.05 -0.70 0" position="0.725 -0.70 0"
+                           metalness="1"
+                           animation="property: rotation; to: 0 360 0; loop: true; dur: 5000; easing: linear;"></a-icosahedron>
+            <!-- Extra lighting for dark model of beer mug -->
+            <a-light type="point" color="white" position="0.725 -0.70 0.2"></a-light>
+        </a-entity>
+
+    </a-entity>
+</a-scene>
+
+</body>
+</html>

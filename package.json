@@ -1,0 +1,14 @@
+{
+  "name": "ar-business-cards-jidoka",
+  "description": "Cool shit yo",
+  "version": "0.0.1",
+  "license": "MIT",
+  "scripts": {
+    "start": "budo --live --verbose --port 3000 --open",
+    "deploy": "ghpages"
+  },
+  "devDependencies": {
+    "budo": "^7.0.0",
+    "ghpages": "0.0.3"
+  }
+}
