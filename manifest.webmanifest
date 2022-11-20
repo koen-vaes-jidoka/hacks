@@ -1,0 +1,21 @@
+{
+    "name": "Jidoka ar business cards",
+    "short_name": "Jidoka ar",
+    "start_url": "./",
+    "display": "standalone",
+    "background_color": "#4DA7D1",
+    "theme_color": "#4DA7D1",
+    "description": "Progressive web app",
+    "icons": [
+        {
+            "src": "assets/images/Jidoka192VrLogo.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/images/Jidoka512VrLogo.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+     ]
+}

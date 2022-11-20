@@ -1,0 +1,42 @@
+#scanning-overlay.hidden {
+    display: none;
+}
+
+.scan-placeholder-container {
+    position: relative;
+    margin: 0 auto;
+}
+
+.scan-placeholder-container .scanner-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    display: block;
+    width: 75%;
+    margin: 0;
+}
+
+.scan-placeholder-container .scanner-card.back {
+    animation-name: fadeInOut;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-duration: 3s;
+    animation-direction: alternate;
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 1;
+    }
+    30% {
+        opacity: 1;
+    }
+    70% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
